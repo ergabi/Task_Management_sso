@@ -1,0 +1,9 @@
+flask 3.0.3
+Werkzeug 3.0.4
+python 3.12.4
+MySQL 8.0.40
+pip install flask
+pip install jsonify
+pip install requests
+pip install Authlib
+pip install Flask-SQLAlchemy 
