@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
+    <body>
+        <div class="header">
+            <div class="left">DCKAP TASK</div>
+            <div class="right">
+                {{ username }} | <a href="{{ url_for('googlelogin') }}"><button>Login</button></a>
+            </div>
+        </div>
+        <div class="container">
+            <h1>Welcome</h1>        
+        </div>
+    </body>
+</html>

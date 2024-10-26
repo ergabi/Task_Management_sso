@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Record Form</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+    </head>
+    <body>
+        {% if username %}
+        <div class="header">
+            <div class="left">DCKAP TASK</div>
+            <div class="right">
+                {{ username }} | <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+        <div class="formcontainer">
+            <h1>Records</h1>
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div>
+                    {{ form.select_module.label }} {{ form.select_module() }}
+                </div>
+                <div>
+                    {{ form.text_area.label }} {{ form.text_area() }}
+                </div>
+                <div>
+                    {{ form.description.label }} {{ form.description() }}
+                </div>
+                <div>
+                    {{ form.file_upload.label }} {{ form.file_upload() }}
+                </div>
+                <div>
+                    {{ form.submit() }} <a href="{{ url_for('dashboard') }}" class="cancel-button">Cancel</a>
+                </div>
+            </form>
+        </div>
+        {% else %}
+        <p>Please log in to access the form.</p>
+        {% endif %}
+    </body>
+</html>

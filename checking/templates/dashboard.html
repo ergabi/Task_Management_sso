@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
+    <body>
+        {% if session %}
+        <header class="header">
+            <div class="left">DCKAP TASK</div>
+            <div class="right">
+                {{ username }} | <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </header>
+        <div class="container">
+            <div class="module">
+                <div class="module-nav">
+                    <h3>Module</h3>
+                    <button id="addBtn" title="Add">&#10133;Add</button>
+                    <button id="nextBtn" title="Next">&#8594;</button>
+                </div>
+                <div class="tree">
+                    <ul>
+                        {% for module in save_modules %}
+                        <li id="{{ module.id }}" onclick="toggleManualModules(this)">
+                            {{ module.selected_module }} 
+                            {% if module.manual_module %}
+                            <span class="count">({{ module.manual_module|length }})</span>  
+                            <ul class="manual-modules" style="display:none;">
+                                {% for manual in module.manual_module %}
+                                <li onclick="selected_module('{{ manual }}')">{{ manual }}</li>  
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="test-case">
+                <div class="test-case-nav">
+                    <h3>Test case Management</h3>
+                    <div>
+                        <button id="prevBtn" title="Previous">&#8592;</button>
+                        <span id="selectedCategory">Category: None</span>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('Formrecord') }}"><button id="addTestCaseBtn" title="Add">&#10133;Test case Add</button></a> 
+                        <button id="copyBtn" title="Copy">&#128203;Copy</button> 
+                        <button id="moveBtn" title="Move">&#8644;move</button> 
+                        <button id="shareBtn" title="Share">&#128257;Share</button> 
+                        <button id="moreBtn" title="More">&#8942;More</button> 
+                        <button id="deleteBtn" title="Delete">&#128465;Delete</button> 
+                    </div>
+                </div>
+                <div class="test-case-display">
+                    <table id="testCaseTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>notes</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for module in select_Modules %}
+                            <tr>
+                                <td>{{ module.id }}</td>
+                                <td>{{ module.selected_module }}</td>
+                                <td>{{ module.manual_module }}</td>
+                                <td>
+                                    <form action="{{ url_for('edit_module', id=module.id) }}"method="POST" style="display:inline;">
+                                        <input type="text" name="selected_module" value="{{ module.selected_module }}" required>
+                                        <input type="text" name="manual_module" value="{{ module.manual_module }}" required>
+                                        <button type="submit">Edit</button>
+                                    </form>
+                                    <form action="{{ url_for('delete_module', id=module.id) }}" method="POST" style="display: inline;">
+                                        <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>notes</th>
+                                <th>Description</th>
+                                <th>file name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in records %}
+                            <tr>
+                                <td>{{ record.id }}</td>
+                                <td>{{ record.selected_module }}</td>
+                                <td>{{ record.text_area }}</td>
+                                <td>{{ record.description }}</td>
+                                <td>{{ record.attached_file_name }}</td>
+                                <td>
+                                    <form action="{{ url_for('edit_record', id=record.id) }}" method="POST" style="display:inline;">
+                                        <input type="text" name="selected_module" value="{{ record.selected_module }}" required>
+                                        <input type="text" name="text_area" value="{{ record.text_area }}" required>
+                                        <input type="text" name="description" value="{{ record.description }}" required>
+                                        <input type="text" name="attached_file_name" value="{{ record.attached_file_name }}" required>
+                                        <button type="submit">Edit</button>
+                                    </form>
+                                    <form action="{{ url_for('delete_record', id=record.id) }}" method="POST" style="display:inline;">
+                                        <button type="submit" onclick="return confirm('Are you sure you want to delete this record?')">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="moduleModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Module/Sub Module</div>
+                <form action="{{ url_for('save_module') }}" method="POST">
+                    <div class="modal-body">
+                        <label for="select_Module">Select Module:</label>
+                        <select id="select_Module" name="selected_module">
+                            <option value="Header Section">Header Section</option>
+                            <option value="Home page">Home page</option>
+                            <option value="Footer Section">Footer Section</option>
+                            <option value="Pricing">Pricing</option>
+                            <option value="Blog">Blog</option>
+                            <option value="Contact">Contact</option>
+                            <option value="Section A">Section A</option>
+                            <option value="Dashboard">Dashboard</option>
+                        </select>
+                        <label for="manual_Module">Sub Module:</label>
+                        <input type="text" id="manual_Module" name="manual_module" placeholder="Enter sub-module name" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="saveBtn">Save</button>
+                        <button id="saveContinueBtn">Save & Continue</button>
+                        <button id="cancelBtn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <p><a href="{{url_for('googlelogin')}}"> Login with google </a></p>
+        {% endif %}
+        <script>
+            function toggleManualModules(element) {
+                const manualModules = element.querySelector('.manual-modules');
+                if (manualModules) {
+                    manualModules.style.display = manualModules.style.display === 'none' ? 'block' : 'none';
+                }
+            }
+    
+            function selectedModule(moduleName) {
+                document.getElementById('selectedCategory').textContent = 'Category: ' + moduleName;
+            }
+    
+            function fetchModules() {
+                fetch('/save_module')
+                    .then(response => response.json())
+                    .then(data => {
+                        const tree = document.querySelector('.tree ul');
+                        tree.innerHTML = '';
+                        data.forEach(save_module => {
+                            const li = document.createElement('li');
+                            li.textContent = save_module.selected_module;
+                            li.setAttribute('onclick', `selectedModule('${save_module.selected_module}')`);
+    
+                            const subUl = document.createElement('ul');
+                            save_module.manual_module.forEach(manual_module => {
+                                const subLi = document.createElement('li');
+                                subLi.textContent = manual_module;
+                                subLi.setAttribute('onclick', `selectedModule('${manual_module}')`);
+                                subUl.appendChild(subLi);
+                            });
+    
+                            li.appendChild(subUl);
+                            tree.appendChild(li);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching modules:', error));
+            }
+    
+            document.getElementById('addBtn').addEventListener('click', function() {
+                document.getElementById('moduleModal').style.display = 'block';
+            });
+    
+            document.getElementById('cancelBtn').addEventListener('click', function() {
+                document.getElementById('moduleModal').style.display = 'none';
+            });
+    
+            document.getElementById('saveContinueBtn').addEventListener('click', function() {
+                alert('Module saved, you can continue');
+            });
+    
+            window.onload = fetchModules;
+        </script>
+    </body>
+</html>
